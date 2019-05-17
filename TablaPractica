@@ -1,0 +1,126 @@
+package tablapractica;
+
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.table.*;
+
+public class TablaPractica extends JFrame implements ActionListener {
+    JFrame ventana;
+    private DefaultTableModel model;
+    private JTable tabla;
+    private JLabel mensajeNombre,mensajePrecio;
+    private JTextField resultadoA,resultadoB,resultadoC;
+    private JButton editar,eliminar,agregar;
+    
+    int row = -1, column = -1;
+    
+    public TablaPractica(){
+        ventana = new JFrame();
+	String data[][] = { {"1","Tacos","$12.00"}, {"2","Tamales","$10.00"}, {"3","Tortas","$35.00"}, {"4","Cochito","$45.00"}   };
+	String label[] = {"ID", "NOMBRE", "PRECIO"};	
+	model = new DefaultTableModel(data,label);
+        tabla = new JTable(model);	
+	mensajeNombre = new JLabel("NUEVO PRODUCTO:");
+        mensajeNombre.setBounds(55, 400, 150, 40);
+        mensajeNombre.setForeground(Color.white);
+        ventana.add(mensajeNombre);
+        
+        resultadoA = new JTextField();
+        resultadoA.setBounds(170, 400, 80, 40);
+        ventana.add(resultadoA);
+        
+        mensajePrecio = new JLabel("iNGRESAR PRECIO$:");
+        mensajePrecio.setBounds(50, 450, 150, 40);
+        mensajePrecio.setForeground(Color.white);
+        ventana.add(mensajePrecio);
+        
+        resultadoB = new JTextField();
+        resultadoB.setBounds(170, 450, 80, 40);
+        ventana.add(resultadoB);
+        
+        resultadoC = new JTextField();
+        resultadoC.setBounds(510, 400, 80, 40);
+        ventana.add(resultadoC);
+        
+        editar = new JButton();
+        editar.setText("EDITAR PRODUCTO");
+        editar.setBounds(350, 400, 150, 40);
+        editar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                row = tabla.getSelectedRow();
+                column = tabla.getSelectedColumn();
+                if (row > -1 && column > -1) {
+                
+                    tabla.setValueAt(resultadoC.getText(),row, column);
+                    System.out.println("Modificado con exito");
+                }
+                tabla.getSelectionModel().clearSelection();
+                row = -1;
+                column = -1;
+            }
+        });
+        
+        ventana.add(editar);
+        
+        eliminar = new JButton();
+        eliminar.setText("ELIMINAR PRODUCTO");
+        eliminar.setBounds(350, 450, 150, 40);
+        eliminar.addActionListener(this);
+        ventana.add(eliminar);
+        
+        agregar = new JButton();
+        agregar.setText("AGREGAR");
+        agregar.setBounds(100, 500, 150, 25);
+        agregar.addActionListener(this);
+        ventana.add(agregar);
+		
+	tabla.setCellSelectionEnabled(true);
+        
+	ListSelectionModel select = tabla.getSelectionModel();
+        select.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);  
+
+        JScrollPane sp = new JScrollPane(tabla); 
+        sp.setBounds(90, 20, 300, 300);
+	ventana.add(sp);
+        ventana.setSize(650,580); //(x,y)
+	ventana.setLocationRelativeTo(null);
+        ventana.setResizable(true);
+        ventana.setLayout(null);
+        ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ventana.getContentPane().setBackground(new Color(51, 204, 255));
+        ventana.setVisible(true);
+    }
+    @Override
+    public void actionPerformed(ActionEvent e) { 
+
+        switch(e.getActionCommand()) {
+            case "ELIMINAR PRODUCTO":
+                DefaultTableModel dtm = (DefaultTableModel)tabla.getModel();
+                row = tabla.getSelectedRow();
+                System.out.println("yes");
+                    tabla.getSelectionModel().clearSelection();
+                    dtm.removeRow(row);
+                
+                break;	   
+            case "AGREGAR":
+                int id = model.getRowCount()+1;
+                String valorId = String.valueOf(id);
+                String resultado = resultadoA.getText();
+ 		String resultado2 = "$"+resultadoB.getText()+".00";
+                addRow(valorId,resultado,resultado2);
+                break;
+        }
+    };
+    public void addRow(String str1, String str2, String str3) {
+        model.addRow(new Object[] {str1,str2,str3});
+    }
+    
+    public static void main(String[] args) {
+        TablaPractica i = new TablaPractica();
+    }    
+}
